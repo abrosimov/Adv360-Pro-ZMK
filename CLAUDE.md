@@ -29,20 +29,19 @@ west build -s zmk/app -p -d build/right -b adv360_right -- -DZMK_CONFIG="$PWD/co
 
 Note the asymmetry: the **left** half is the one built with ZMK Studio (`studio-rpc-usb-uart` snippet + `CONFIG_ZMK_STUDIO=y`); the right half is not. This is the "Clique" build.
 
-## Editing the keymap — the two-file rule
+## Editing the keymap
 
-The layout lives in **two parallel representations that must be kept in sync**:
+`config/adv360.keymap` is the **single source of truth** — the device-tree keymap actually compiled into firmware. `adv360_left.keymap` and `adv360_right.keymap` are thin wrappers that only `#include "adv360.keymap"`, so both halves share one keymap. Keep at least one space between behaviours; a malformed grid breaks the build.
 
-- `config/adv360.keymap` — the device-tree source of truth actually compiled into firmware. `adv360_left.keymap` and `adv360_right.keymap` are thin wrappers that only `#include "adv360.keymap"`, so both halves share one keymap.
-- `config/keymap.json` — the same layout in the format used by [Nick Coutsos's keymap editor](https://nickcoutsos.github.io/keymap-editor/). The GUI editor reads/writes this file.
+The GUI [Nick Coutsos keymap editor](https://nickcoutsos.github.io/keymap-editor/) reads and writes **`adv360.keymap` directly**, using `config/info.json` for the physical layout (the `LAYOUT` object: 76 keys with `row`/`col`/`x`/`y`/`w`). So editor edits are committed straight to the `.keymap` (see commits authored by `keymap-editor[bot]`, e.g. `da9af49`, which touch `adv360.keymap` + `info.json`).
 
-Any binding change made by hand in `adv360.keymap` should be mirrored in `keymap.json` and vice versa, or the GUI and the compiled firmware will disagree. `UPGRADE.md` documents this coupling (its merge-conflict guidance is about editing the same key in both files). When editing `keymap.json`, keep each behaviour quoted and comma-separated; in `adv360.keymap` keep at least one space between behaviours — malformed either way breaks the build.
+There is **no `keymap.json`** — it was a stale artefact from an older editor flow, not read by the build (grep the repo: nothing references it) and never written by the current editor, so it was removed. Do not reintroduce a parallel JSON keymap; edit `adv360.keymap` (by hand or via the editor). `UPGRADE.md` still references `keymap.json` for the V2→V3 migration, but that guidance predates its removal.
 
 Combos and other position-dependent features need exact matrix key positions — see `assets/key-positions.md` (image + text).
 
 ### Keymap structure
 
-Layers in `config/adv360.keymap` (index → `display-name`): `0 Base`, `1 Kp` (keypad), `2 Fn`, `3 Mod`. Layers 4–7 are `status = "reserved"` colour placeholders (Red/Purple/Cyan/Yellow) — reserved to hold a layer index/colour slot, not populated. Layer switching uses `&mo`/`&tog` referencing these indices, so **renumbering or reordering layers breaks the `&mo N` / `&tog N` references** scattered through every layer.
+Layers in `config/adv360.keymap` (index → `display-name`): `0 Base`, `1 Kp` (keypad), `2 Fn`, `3 Mod`, `4 Red`, `5 Purple`. Layers `6 Cyan` and `7 Yellow` remain `status = "reserved"` (placeholders holding an index/colour slot, not populated). The layer's colour comes from its **index**, per the table in `README.md` (index 4 = red, 5 = magenta/purple), not from its `display-name`. Layer switching uses `&mo`/`&tog` referencing these indices, so **renumbering or reordering layers breaks the `&mo N` / `&tog N` references** scattered through every layer. Red/Purple are currently all-`&trans` and have no access key — unreachable until an `&mo 4`/`&tog 4` (etc.) is bound somewhere.
 
 Custom behaviours defined inline: `hm` (homerow mods, hold-tap) and `macro_ver` (the version macro, see below). `config/macros.dtsi` holds additional macros, `#include`d into the `behaviors` block.
 
