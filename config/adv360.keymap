@@ -86,11 +86,11 @@
         Nav {
             display-name = "Red";
             bindings = <
-&trans  &trans  &trans  &trans  &trans  &trans  &trans                                      &trans  &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans  &trans                                      &trans  &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans                  &trans      &trans                  &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans  &trans  &trans          &trans  &trans  &trans      &trans  &trans  &trans          &trans  &trans  &trans  &trans  &trans
+&trans     &trans    &trans    &kp PG_UP  &trans     &trans   &trans                                            &trans  &trans    &trans    &kp PG_UP  &trans     &trans   &trans
+&trans     &trans    &trans    &kp UP     &trans     &trans   &trans                                            &trans  &trans    &trans    &kp UP     &trans     &trans   &trans
+&trans     &kp HOME  &kp LEFT  &trans     &kp RIGHT  &kp END  &trans  &kp LCTRL  &trans      &kp RCTRL  &trans  &trans  &kp HOME  &kp LEFT  &trans     &kp RIGHT  &kp END  &trans
+&kp LSHFT  &trans    &trans    &kp DOWN   &trans     &trans                      &trans      &trans                     &trans    &trans    &kp DOWN   &trans     &trans   &kp LSHFT
+&trans     &trans    &trans    &kp PG_DN  &kp PG_DN           &trans  &trans     &trans      &trans     &trans  &trans            &trans    &kp PG_DN  &trans     &trans   &trans
             >;
         };
 
